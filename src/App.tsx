@@ -139,7 +139,7 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           command,
-          workingDir: '/workspaces/codespaces-blank/project-bolt-sb1-xoarq3ti/project/preview'
+          workingDir: '/src/components/preview'
         })
       });
       
