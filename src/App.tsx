@@ -156,6 +156,8 @@ function App() {
     try {
       const prompt = `You are a coding assistant with file system access. 
 
+IMPORTANT: Commands are executed in WebContainer (browser-based Node.js environment). Most npm commands work, but some system commands may have limitations.
+
 Current files: ${state.files.map(f => f.name).join(', ')}
 
 Chat history: ${newHistory}
@@ -165,8 +167,9 @@ User request: ${userMessage}
 Respond with JSON containing:
 - message: your response
 - fileOperations: array of {type: "create"|"write"|"delete", path: "filename", content: "file content"}
+- commandOperations: array of {type: "execute", command: "npm install" etc}
 
-Use create for new files, write for updating existing files.`;
+Use create for new files, write for updating existing files. Commands run in WebContainer environment.`;
       
       const mistralResponse = await queryMistral(prompt);
       
@@ -562,18 +565,6 @@ Use create for new files, write for updating existing files.`;
           </div>
         )}
       </div>
-
-      <div style={{ backgroundColor: '#374151', borderTop: '1px solid #4b5563', padding: '0.25rem 1rem', fontSize: '0.75rem', color: '#9ca3af' }}>
-        {activeFile ? `${activeFile.name} • ${activeFile.language}` : 'No file selected'} • {state.files.length} files
-        {state.showPreview && <span style={{ color: '#10b981' }}> • Preview Active</span>}
-        {state.showChat && <span style={{ color: '#3b82f6' }}> • AI Chat Active</span>}
-        <span style={{ color: '#fbbf24' }}> • Press Ctrl+S to save</span>
-      </div>
-    </div>
-  );
-}
-
-export default App;
 
       <div style={{ backgroundColor: '#374151', borderTop: '1px solid #4b5563', padding: '0.25rem 1rem', fontSize: '0.75rem', color: '#9ca3af' }}>
         {activeFile ? `${activeFile.name} • ${activeFile.language}` : 'No file selected'} • {state.files.length} files
