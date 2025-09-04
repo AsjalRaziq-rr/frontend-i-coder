@@ -141,7 +141,8 @@ function App() {
       const result = await runCommand(webcontainer, command);
       return result;
     } catch (error) {
-      return `WebContainer error: ${error.message || error}`;
+      // Fallback message when WebContainer isn't available
+      return `Command execution not available in this environment.\nCommand: ${command}\nNote: WebContainer requires specific browser headers. Try running locally or use a different hosting platform.`;
     }
   };
 
