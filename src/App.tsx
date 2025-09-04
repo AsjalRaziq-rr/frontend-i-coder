@@ -131,32 +131,17 @@ function App() {
 
   const executeCommand = async (command: string) => {
     try {
-      // Sync files before executing command
-      await syncFiles();
+      // Use WebContainer for command execution
+      const webcontainer = await getWebContainer();
       
-      const response = await fetch(`${BACKEND_URL}/api/execute`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          command,
-          workingDir: '/src/components/preview'
-        })
-      });
+      // Mount current files to WebContainer
+      await mountFiles(webcontainer, state.files);
       
-      if (!response.ok) {
-        return `Error: Server returned ${response.status}`;
-      }
-      
-      const text = await response.text();
-      try {
-        const result = JSON.parse(text);
-        const output = result.output || 'Command executed';
-        return output;
-      } catch (e) {
-        return `Server response: ${text}`;
-      }
+      // Execute command in WebContainer
+      const result = await runCommand(webcontainer, command);
+      return result;
     } catch (error) {
-      return `Error: Cannot connect to command server. ${error}`;
+      return `WebContainer error: ${error.message || error}`;
     }
   };
 
@@ -577,6 +562,18 @@ Use create for new files, write for updating existing files.`;
           </div>
         )}
       </div>
+
+      <div style={{ backgroundColor: '#374151', borderTop: '1px solid #4b5563', padding: '0.25rem 1rem', fontSize: '0.75rem', color: '#9ca3af' }}>
+        {activeFile ? `${activeFile.name} • ${activeFile.language}` : 'No file selected'} • {state.files.length} files
+        {state.showPreview && <span style={{ color: '#10b981' }}> • Preview Active</span>}
+        {state.showChat && <span style={{ color: '#3b82f6' }}> • AI Chat Active</span>}
+        <span style={{ color: '#fbbf24' }}> • Press Ctrl+S to save</span>
+      </div>
+    </div>
+  );
+}
+
+export default App;
 
       <div style={{ backgroundColor: '#374151', borderTop: '1px solid #4b5563', padding: '0.25rem 1rem', fontSize: '0.75rem', color: '#9ca3af' }}>
         {activeFile ? `${activeFile.name} • ${activeFile.language}` : 'No file selected'} • {state.files.length} files
