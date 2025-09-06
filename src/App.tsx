@@ -131,6 +131,10 @@ function App() {
 
   const executeCommand = async (command: string) => {
     try {
+      if (!command || typeof command !== 'string') {
+        return 'Error: Invalid command';
+      }
+      
       // Use WebContainer for command execution
       const webcontainer = await getWebContainer();
       
@@ -141,8 +145,8 @@ function App() {
       const result = await runCommand(webcontainer, command);
       return result;
     } catch (error) {
-      // Fallback message when WebContainer isn't available
-      return `Command execution not available in this environment.\nCommand: ${command}\nNote: WebContainer requires specific browser headers. Try running locally or use a different hosting platform.`;
+      const errorMessage = error?.message || error || 'Unknown error';
+      return `WebContainer not available: ${errorMessage}\n\nNote: WebContainer requires modern browser with specific headers.\nFor full functionality, run commands locally.`;
     }
   };
 
